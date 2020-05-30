@@ -32,7 +32,10 @@ router.post(
                         .status(409)
                         .json({ message: "Email already exists!", code: 0 });
                 } else {
-                    const hashedPassword = bcrypt.hashSync(req.body.password);
+                    const hashedPassword = bcrypt.hashSync(
+                        req.body.password,
+                        salt
+                    );
                     let user = new User(req.body);
                     user.password = hashedPassword;
                     user.save()
@@ -161,6 +164,7 @@ router.post("/validateOTP", (req, res) => {
         }
     });
 });
+
 router.get("/find/v1", (req, res) => {
     let query = req.body.name + ".*";
     Prof.find({ name: { $regex: query, $options: "i" } })
@@ -169,4 +173,11 @@ router.get("/find/v1", (req, res) => {
             res.json(result);
         });
 });
+
+/*  Routes remaining
+    1. Write review - requires auth
+    2. Read review - requires auth
+    3. Give rating
+    4. Read rating 
+*/
 module.exports = router;
