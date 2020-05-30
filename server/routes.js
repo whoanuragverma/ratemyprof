@@ -7,7 +7,8 @@ const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const salt = bcrypt.genSaltSync(10);
-const sendEMail = require("./mailServer");
+const sendOTP = require("./mailServer");
+
 router.post(
     "/signup",
     [
@@ -113,28 +114,35 @@ router.get("/generateOTP", (req, res) => {
         return res.status(401).json({ message: "Unauthorized" });
     }
     const decoded = jwt.decode(token);
-    User.findById(decoded._id).then((result) => {
-        const email = result.email;
-        if (!result.otpVerified) {
-            otp.findOne({ UID: decoded._id }).then((otpRes) => {
-                if (!otpRes) {
-                    let otps = new otp({
-                        UID: decoded._id,
-                        OTP: Math.floor(Math.random() * 8999 + 1000),
-                    });
-                    otps.save().then(() => {
-                        sendEMail(email, otps.OTP);
-                        res.json({ message: "OTP Sent!", code: 1 });
-                    });
-                } else {
-                    sendEMail(email, otpRes.OTP);
-                    res.json({ message: "OTP Sent Again!", code: 2 });
-                }
+    User.findById(decoded._id)
+        .then((result) => {
+            const email = result.email;
+            if (!result.otpVerified) {
+                otp.findOne({ UID: decoded._id }).then((otpRes) => {
+                    if (!otpRes) {
+                        let otps = new otp({
+                            UID: decoded._id,
+                            OTP: Math.floor(Math.random() * 8999 + 1000),
+                        });
+                        otps.save().then(() => {
+                            sendOTP(email, otps.OTP);
+                            res.json({ message: "OTP Sent!", code: 1 });
+                        });
+                    } else {
+                        sendOTP(email, otpRes.OTP);
+                        res.json({ message: "OTP Sent Again!", code: 2 });
+                    }
+                });
+            } else {
+                res.json({ message: "OTP already verfied!", code: 3 });
+            }
+        })
+        .catch((err) => {
+            res.status(403).json({
+                message: "Something's not right.",
+                code: 4,
             });
-        } else {
-            res.json({ message: "OTP already verfied!", code: 3 });
-        }
-    });
+        });
 });
 
 router.post("/validateOTP", (req, res) => {
@@ -144,25 +152,32 @@ router.post("/validateOTP", (req, res) => {
     }
     const decoded = jwt.decode(token);
     const iOTP = req.body.OTP;
-    otp.findOne({ UID: decoded._id }).then((result) => {
-        if (iOTP == result.OTP) {
-            User.findByIdAndUpdate(decoded._id, { otpVerified: true }).then(
-                () => {
-                    return res.json({
-                        message: "Success",
-                        code: 0,
-                        auth: true,
-                    });
-                }
-            );
-        } else {
-            return res.json({
-                message: "Invalid OTP",
-                code: 1,
-                auth: "pending",
+    otp.findOne({ UID: decoded._id })
+        .then((result) => {
+            if (iOTP == result.OTP) {
+                User.findByIdAndUpdate(decoded._id, { otpVerified: true }).then(
+                    () => {
+                        return res.json({
+                            message: "Success",
+                            code: 0,
+                            auth: true,
+                        });
+                    }
+                );
+            } else {
+                return res.json({
+                    message: "Invalid OTP",
+                    code: 1,
+                    auth: "pending",
+                });
+            }
+        })
+        .catch((err) => {
+            res.status(403).json({
+                message: "Something's not right.",
+                code: 4,
             });
-        }
-    });
+        });
 });
 
 router.get("/find/v1", (req, res) => {
