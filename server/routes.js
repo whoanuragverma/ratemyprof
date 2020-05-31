@@ -60,13 +60,13 @@ router.post(
                     user.password = hashedPassword;
                     user.save()
                         .then(() => {
-                            res.status(201).json({
+                            return res.status(201).json({
                                 message: "SignUp successfull!",
                                 code: 1,
                             });
                         })
                         .catch(() => {
-                            res.status(507).json({
+                            return res.status(507).json({
                                 message: "Something went wrong!",
                             });
                         });
@@ -89,7 +89,7 @@ router.post(
     (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            res.status(422).json({ error: errors.array() });
+            return res.status(422).json({ error: errors.array() });
         }
         User.find({ email: req.body.email }).then((result) => {
             if (result.length == 0) {
@@ -120,7 +120,9 @@ router.post(
                             code: 2,
                         });
                     }
-                    res.status(200).json({ auth: true, token: token, code: 3 });
+                    return res
+                        .status(200)
+                        .json({ auth: true, token: token, code: 3 });
                 }
             }
         });
@@ -145,19 +147,22 @@ router.get("/generateOTP", (req, res) => {
                         });
                         otps.save().then(() => {
                             sendOTP(email, otps.OTP);
-                            res.json({ message: "OTP Sent!", code: 1 });
+                            return res.json({ message: "OTP Sent!", code: 1 });
                         });
                     } else {
                         sendOTP(email, otpRes.OTP);
-                        res.json({ message: "OTP Sent Again!", code: 2 });
+                        return res.json({
+                            message: "OTP Sent Again!",
+                            code: 2,
+                        });
                     }
                 });
             } else {
-                res.json({ message: "OTP already verfied!", code: 3 });
+                return res.json({ message: "OTP already verfied!", code: 3 });
             }
         })
         .catch((err) => {
-            res.status(403).json({
+            return res.status(403).json({
                 message: "Something's not right.",
                 code: 4,
             });
@@ -192,7 +197,7 @@ router.post("/validateOTP", (req, res) => {
             }
         })
         .catch((err) => {
-            res.status(403).json({
+            return res.status(403).json({
                 message: "Something's not right.",
                 code: 4,
             });
@@ -204,20 +209,20 @@ router.get("/find/v1", (req, res) => {
     Prof.find({ name: { $regex: query, $options: "i" } })
         .limit(10)
         .then((result) => {
-            res.json(result);
+            return res.json(result);
         });
 });
 
 router.get("/verify", (req, res) => {
     const token = req.headers["x-access-token"];
     if (!token) {
-        res.status(409).json({ code: 0, message: "Unauthorized" });
+        return res.status(409).json({ code: 0, message: "Unauthorized" });
     }
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            res.status(409).json({ response: false });
+            return res.status(409).json({ response: false });
         } else {
-            res.status(200).json({ response: true });
+            return res.status(200).json({ response: true });
         }
     });
 });
@@ -225,11 +230,11 @@ router.get("/verify", (req, res) => {
 router.get("/read_review", (req, res) => {
     const FID = req.body.FID;
     if (!FID) {
-        res.status(200).json({ code: 3, message: "FID not Supplied" });
+        return res.status(200).json({ code: 3, message: "FID not Supplied" });
     }
     Prof.findOne({ FID: FID }).then(() => {
         Reviews.find({ FID: FID }).then((result) => {
-            res.status(200).json(result);
+            return res.status(200).json(result);
         });
     });
 });
@@ -237,11 +242,11 @@ router.get("/read_review", (req, res) => {
 router.get("/read_rating", (req, res) => {
     const FID = req.body.FID;
     if (!FID) {
-        res.status(200).json({ code: 3, message: "FID not Supplied" });
+        return res.status(200).json({ code: 3, message: "FID not Supplied" });
     }
     Prof.findOne({ FID: FID }).then(() => {
         Ratings.find({ FID: FID }).then((result) => {
-            res.status(200).json(result);
+            return res.status(200).json(result);
         });
     });
 });
@@ -249,11 +254,11 @@ router.get("/read_rating", (req, res) => {
 router.post("/write_review", (req, res) => {
     const token = req.headers["x-access-token"];
     if (!token) {
-        res.status(409).json({ code: 0, message: "Unauthorized" });
+        return res.status(409).json({ code: 0, message: "Unauthorized" });
     }
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            res.status(409).json({ code: 1, message: "Unauthorized" });
+            return res.status(409).json({ code: 1, message: "Unauthorized" });
         } else {
             const UID = decoded._id;
             const FID = req.body.FID;
@@ -269,10 +274,13 @@ router.post("/write_review", (req, res) => {
             });
             Review.save()
                 .then(() => {
-                    res.json({ code: 2, message: "Success" });
+                    return res.json({ code: 2, message: "Success" });
                 })
                 .catch(() => {
-                    res.json({ code: 3, message: "Something went wrong" });
+                    return res.json({
+                        code: 3,
+                        message: "Something went wrong",
+                    });
                 });
         }
     });
@@ -281,11 +289,11 @@ router.post("/write_review", (req, res) => {
 router.post("/write_rating", (req, res) => {
     const token = req.headers["x-access-token"];
     if (!token) {
-        res.status(409).json({ code: 0, message: "Unauthorized" });
+        return res.status(409).json({ code: 0, message: "Unauthorized" });
     }
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            res.status(409).json({ code: 1, message: "Unauthorized" });
+            return res.status(409).json({ code: 1, message: "Unauthorized" });
         } else {
             const UID = decoded._id;
             const FID = req.body.FID;
@@ -297,10 +305,13 @@ router.post("/write_rating", (req, res) => {
             });
             Rating.save()
                 .then(() => {
-                    res.json({ code: 2, message: "Success" });
+                    return res.json({ code: 2, message: "Success" });
                 })
                 .catch(() => {
-                    res.json({ code: 3, message: "Something went wrong" });
+                    return res.json({
+                        code: 3,
+                        message: "Something went wrong",
+                    });
                 });
         }
     });
@@ -309,7 +320,7 @@ router.post("/write_rating", (req, res) => {
 router.get("/check_rating", (req, res) => {
     const token = req.headers["x-access-token"];
     if (!token) {
-        res.status(409).json({ code: 0, message: "Unauthorized" });
+        return res.status(409).json({ code: 0, message: "Unauthorized" });
     }
     const decoded = jwt.decode(token);
     const FID = req.body.FID;
@@ -324,7 +335,7 @@ router.get("/check_rating", (req, res) => {
 router.get("/check_review", (req, res) => {
     const token = req.headers["x-access-token"];
     if (!token) {
-        res.status(409).json({ code: 0, message: "Unauthorized" });
+        return res.status(409).json({ code: 0, message: "Unauthorized" });
     }
     const decoded = jwt.decode(token);
     const FID = req.body.FID;
