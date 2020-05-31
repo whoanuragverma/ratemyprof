@@ -46,7 +46,7 @@ function sendEmail(email, otp) {
 
 module.exports = function (email, otp) {
     const mailOptions = {
-        from: process.env.EMAIL,
+        from: "RateMyProf Team",
         to: email,
         generateTextFromHTML: true,
         subject: "RateMyProf Verification",

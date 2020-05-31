@@ -1,8 +1,27 @@
+/******************************
+ *  Copyright Anurag Verma -  2020
+ *  API Overview:
+ *    - signup          -- POST --      BODY[email,password,name]
+ *    - login           -- POST --      BODY[email,password]
+ *    - generateOTP     -- GET  --      HEADER[x-access-token]
+ *    - validateOTP     -- POST --      BODY[OTP] HEADER[x-access-token]
+ *    - find/v1/        -- GET  --      BODY[name]
+ *    - verify          -- GET  --      HEADER[x-access-token]
+ *    - read_review     -- GET  --      BODY[FID]
+ *    - read_rating     -- GET  --      BODY[FID]
+ *    - write_review    -- POST --      HEADER[x-access-token] BODY[FID,anonymous,review]
+ *    - write_rating    -- POST --      HEADER[x-access-token] BODY[FID,rating]
+ *    - check_rating    -- GET  --      HEADER[x-access-token] BODY[FID]
+ *    - check_review    -- GET  --      HEADER[x-access-token] BODY[FID]
+ ******************************/
+
 const express = require("express");
 const router = express.Router();
 let User = require("./models/user");
 let Prof = require("./models/prof");
 let otp = require("./models/otp");
+let Reviews = require("./models/reviews");
+let Ratings = require("./models/ratings");
 const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -189,10 +208,132 @@ router.get("/find/v1", (req, res) => {
         });
 });
 
-/*  Routes remaining
-    1. Write review - requires auth
-    2. Read review - requires auth
-    3. Give rating
-    4. Read rating 
-*/
+router.get("/verify", (req, res) => {
+    const token = req.headers["x-access-token"];
+    if (!token) {
+        res.status(409).json({ code: 0, message: "Unauthorized" });
+    }
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            res.status(409).json({ response: false });
+        } else {
+            res.status(200).json({ response: true });
+        }
+    });
+});
+
+router.get("/read_review", (req, res) => {
+    const FID = req.body.FID;
+    if (!FID) {
+        res.status(200).json({ code: 3, message: "FID not Supplied" });
+    }
+    Prof.findOne({ FID: FID }).then(() => {
+        Reviews.find({ FID: FID }).then((result) => {
+            res.status(200).json(result);
+        });
+    });
+});
+
+router.get("/read_rating", (req, res) => {
+    const FID = req.body.FID;
+    if (!FID) {
+        res.status(200).json({ code: 3, message: "FID not Supplied" });
+    }
+    Prof.findOne({ FID: FID }).then(() => {
+        Ratings.find({ FID: FID }).then((result) => {
+            res.status(200).json(result);
+        });
+    });
+});
+
+router.post("/write_review", (req, res) => {
+    const token = req.headers["x-access-token"];
+    if (!token) {
+        res.status(409).json({ code: 0, message: "Unauthorized" });
+    }
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            res.status(409).json({ code: 1, message: "Unauthorized" });
+        } else {
+            const UID = decoded._id;
+            const FID = req.body.FID;
+            const name = decoded._name;
+            const anonymous = req.body.anonymous;
+            const review = req.body.review;
+            let Review = new Reviews({
+                UID: UID,
+                FID: FID,
+                name: name,
+                anonymous: anonymous,
+                review: review,
+            });
+            Review.save()
+                .then(() => {
+                    res.json({ code: 2, message: "Success" });
+                })
+                .catch(() => {
+                    res.json({ code: 3, message: "Something went wrong" });
+                });
+        }
+    });
+});
+
+router.post("/write_rating", (req, res) => {
+    const token = req.headers["x-access-token"];
+    if (!token) {
+        res.status(409).json({ code: 0, message: "Unauthorized" });
+    }
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            res.status(409).json({ code: 1, message: "Unauthorized" });
+        } else {
+            const UID = decoded._id;
+            const FID = req.body.FID;
+            const rating = req.body.rating;
+            let Rating = new Ratings({
+                UID: UID,
+                FID: FID,
+                rating: rating,
+            });
+            Rating.save()
+                .then(() => {
+                    res.json({ code: 2, message: "Success" });
+                })
+                .catch(() => {
+                    res.json({ code: 3, message: "Something went wrong" });
+                });
+        }
+    });
+});
+
+router.get("/check_rating", (req, res) => {
+    const token = req.headers["x-access-token"];
+    if (!token) {
+        res.status(409).json({ code: 0, message: "Unauthorized" });
+    }
+    const decoded = jwt.decode(token);
+    const FID = req.body.FID;
+    Ratings.find({ UID: decoded._id, FID: FID }).then((result) => {
+        if (result.length == 0) {
+            return res.json({ response: true });
+        }
+        return res.json({ response: false });
+    });
+});
+
+router.get("/check_review", (req, res) => {
+    const token = req.headers["x-access-token"];
+    if (!token) {
+        res.status(409).json({ code: 0, message: "Unauthorized" });
+    }
+    const decoded = jwt.decode(token);
+    const FID = req.body.FID;
+    Reviews.find({ UID: decoded._id, FID: FID }).then((result) => {
+        if (result.length == 0) {
+            return res.json({ response: true });
+        }
+        return res.json({ response: false });
+    });
+});
+
 module.exports = router;
