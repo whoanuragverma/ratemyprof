@@ -6,7 +6,7 @@
     "scripts": {
         "server": "nodemon  index.js",
         "client": "npm start --prefix client",
-        "dev": "concurrently \"npm run server\" \"npm run client\"",
+        "dev": "concurrently \"npm run client\" \"npm run server\"",
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node index.js"
     },
@@ -24,7 +24,9 @@
         "googleapis": "^51.0.0",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^5.9.16",
-        "nodemailer": "^6.4.8"
+        "nodemailer": "^6.4.8",
+        "react-router-dom": "^5.2.0",
+        "react-typing-effect": "^2.0.3"
     },
     "devDependencies": {
         "nodemon": "^2.0.4",

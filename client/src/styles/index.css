@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap");
+
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
@@ -5,10 +8,88 @@ body {
         "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+    display: none;
 }
 .home {
     height: 100vh;
 }
+.ant-btn-lg {
+    height: 47px !important;
+}
+.search {
+    padding-top: 5%;
+}
+.home div:first-child {
+    padding: 0 6%;
+}
 .home div:last-child {
-    padding: 0 8%;
+    padding: 0 5%;
+}
+.title {
+    font-family: "Montserrat", sans-serif;
+    font-size: 3em !important;
+    font-weight: 900 !important;
+    color: #0000008a;
+}
+.title-small {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700 !important;
+}
+.d-none {
+    display: none;
+}
+.background {
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    position: fixed;
+}
+@keyframes shake1 {
+    from {
+        top: 63vh;
+        left: 22vw;
+    }
+    to {
+        top: 68vh;
+        left: 25vw;
+    }
+}
+.img1 {
+    position: relative;
+    animation: shake1 2.5s ease-in-out infinite alternate-reverse;
+}
+@keyframes shake2 {
+    from {
+        top: 20vh;
+        left: 49vw;
+    }
+    to {
+        top: 13vh;
+        left: 55vw;
+    }
+}
+.img2 {
+    position: relative;
+    animation: shake2 3.5s ease-in-out infinite alternate-reverse;
+}
+
+@media only screen and (max-width: 576px) {
+    .home {
+        height: 40vh;
+    }
+    .home div:last-child {
+        position: fixed;
+        top: 60%;
+    }
+    .mobile-res {
+        width: 308px;
+    }
+}
+
+ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+    box-shadow: none !important;
 }

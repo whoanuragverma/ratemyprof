@@ -204,7 +204,7 @@ router.post("/validateOTP", (req, res) => {
         });
 });
 
-router.get("/find/v1", (req, res) => {
+router.post("/find/v1", (req, res) => {
     let query = req.body.name + ".*";
     Prof.find({ name: { $regex: query, $options: "i" } })
         .limit(10)
