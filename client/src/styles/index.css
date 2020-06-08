@@ -61,6 +61,14 @@ body {
         left: 25vw;
     }
 }
+@keyframes shake3 {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(280deg);
+    }
+}
 .img1 {
     position: relative;
     animation: shake1 2.5s ease-in-out infinite alternate-reverse;
@@ -79,7 +87,44 @@ body {
     position: relative;
     animation: shake2 3.5s ease-in-out infinite alternate-reverse;
 }
-
+.img3 {
+    position: relative;
+    top: 55vh;
+    left: 37vw;
+    animation: shake3 5.5s ease-in-out infinite alternate-reverse;
+}
+.img4 {
+    position: relative;
+    animation: shake4 9s ease-in-out infinite alternate-reverse;
+}
+.img5 {
+    position: relative;
+    animation: shake5 3s ease-in-out infinite alternate-reverse;
+}
+@keyframes shake5 {
+    from {
+        top: 65vh;
+        left: 37vw;
+        transform: scale(0.5);
+    }
+    to {
+        top: 69vh;
+        transform: scale(0.8);
+        left: 43vw;
+    }
+}
+@keyframes shake4 {
+    from {
+        top: 10vh;
+        left: -25vw;
+        transform: rotate(-180deg);
+    }
+    to {
+        top: 19vh;
+        left: -5vw;
+        transform: rotate(180deg);
+    }
+}
 @media only screen and (max-width: 576px) {
     .home {
         height: 40vh;

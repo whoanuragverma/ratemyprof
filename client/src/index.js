@@ -5,6 +5,7 @@ import "antd/dist/antd.css";
 import SearchBarHome from "./components/searchbarhome";
 import SearchFullPage from "./components/searchfullpage";
 import UserMenu from "./components/usermenu";
+import ProfMenu from "./components/profmenu";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter, Route } from "react-router-dom";
 ReactDOM.render(
@@ -13,6 +14,7 @@ ReactDOM.render(
             <Route exact path="/" component={SearchBarHome} />
             <Route path="/search" component={SearchFullPage} />
             <Route path="/user" component={UserMenu} />
+            <Route path="/ID/:id" component={ProfMenu} />
         </React.Fragment>
     </BrowserRouter>,
     document.getElementById("root")

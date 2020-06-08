@@ -6,9 +6,10 @@ import {
     LockOutlined,
     SmileOutlined,
     LockFilled,
+    LogoutOutlined,
 } from "@ant-design/icons";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 const UserMenu = () => {
     const auth = localStorage.getItem("auth");
@@ -20,6 +21,7 @@ const UserMenu = () => {
     const [OTPValidate, setOTPValidate] = useState();
     const [OTPValidateError, setOTPValidateError] = useState();
     const [loading, setLoading] = useState(false);
+    const [Name, setName] = useState("Smelly Cat");
     const onFinishSignUp = (values) => {
         setLoading(true);
         setemailValidate();
@@ -114,6 +116,24 @@ const UserMenu = () => {
                 if (res.code === 2 || res.code === 1) {
                     setOTPValidate("warning");
                     setOTPValidateError(res.message);
+                }
+            });
+    };
+    const verifyToken = () => {
+        fetch("/api/verify", {
+            method: "GET",
+            headers: {
+                "x-access-token": token,
+            },
+        })
+            .then((res) => res.json())
+            .then((res) => {
+                if (!res.response) {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("auth");
+                    window.location.reload();
+                } else {
+                    return setName(res.decoded);
                 }
             });
     };
@@ -309,7 +329,7 @@ const UserMenu = () => {
                                     type="primary"
                                     loading={loading}
                                 >
-                                    Validate
+                                    Verify
                                 </Button>
                                 <Button
                                     htmlType="button"
@@ -319,6 +339,16 @@ const UserMenu = () => {
                                 >
                                     Resend
                                 </Button>
+                                <Button
+                                    type="dashed"
+                                    onClick={() => {
+                                        localStorage.removeItem("token");
+                                        localStorage.removeItem("auth");
+                                        window.location.reload();
+                                    }}
+                                >
+                                    {<LogoutOutlined />} Logout
+                                </Button>
                             </Space>
                         </Form.Item>
                     </Form>
@@ -326,7 +356,40 @@ const UserMenu = () => {
             </React.Fragment>
         );
     } else if (auth === "true") {
-        return "VErify token if invalid delete and reload. Otherwise show option to delter";
+        verifyToken();
+        return (
+            <React.Fragment>
+                <SearchBarHome />
+                <Modal
+                    centered
+                    footer={null}
+                    visible
+                    onCancel={() => (window.location.href = "/")}
+                >
+                    <Title level={3}>Hi, {Name.name}</Title>
+                    You are already loggend in. 😎 🙌
+                    <br />
+                    <br />
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            localStorage.removeItem("token");
+                            localStorage.removeItem("auth");
+                        }}
+                    >
+                        {<LogoutOutlined />} Logout
+                    </Button>
+                    <br /> <br />
+                    <Text type="secondary">{Name._id}</Text>
+                    <br />
+                    <Text strong>Made with ❤ in India</Text>
+                </Modal>
+            </React.Fragment>
+        );
+    } else {
+        localStorage.removeItem("auth");
+        localStorage.removeItem("token");
+        window.location.reload();
     }
 };
 export default UserMenu;

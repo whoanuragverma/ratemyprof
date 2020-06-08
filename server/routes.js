@@ -212,6 +212,11 @@ router.post("/find/v1", (req, res) => {
             return res.json(result);
         });
 });
+router.post("/find/v2", (req, res) => {
+    Prof.find({ FID: req.body.FID }).then((result) => {
+        return res.json(result);
+    });
+});
 
 router.get("/verify", (req, res) => {
     const token = req.headers["x-access-token"];
@@ -222,12 +227,12 @@ router.get("/verify", (req, res) => {
         if (err) {
             return res.status(409).json({ response: false });
         } else {
-            return res.status(200).json({ response: true });
+            return res.status(200).json({ response: true, decoded });
         }
     });
 });
 
-router.get("/read_review", (req, res) => {
+router.post("/read_review", (req, res) => {
     const FID = req.body.FID;
     if (!FID) {
         return res.status(200).json({ code: 3, message: "FID not Supplied" });
@@ -239,7 +244,7 @@ router.get("/read_review", (req, res) => {
     });
 });
 
-router.get("/read_rating", (req, res) => {
+router.post("/read_rating", (req, res) => {
     const FID = req.body.FID;
     if (!FID) {
         return res.status(200).json({ code: 3, message: "FID not Supplied" });

@@ -22,7 +22,6 @@ const SearchFullPage = (props) => {
         })
             .then((res) => res.json())
             .then((res) => {
-                console.log(res);
                 setLoading(false);
                 setData(res);
             });
@@ -67,7 +66,9 @@ const SearchFullPage = (props) => {
                             <List.Item>
                                 <List.Item.Meta
                                     title={
-                                        <Link to={item.FID}>{item.name}</Link>
+                                        <Link to={`/ID/${item.FID}`}>
+                                            {item.name}
+                                        </Link>
                                     }
                                     description={item.department}
                                     avatar={
