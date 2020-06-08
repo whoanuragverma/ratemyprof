@@ -9,11 +9,11 @@ import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter, Route } from "react-router-dom";
 ReactDOM.render(
     <BrowserRouter>
-        <React.StrictMode>
+        <React.Fragment>
             <Route exact path="/" component={SearchBarHome} />
             <Route path="/search" component={SearchFullPage} />
             <Route path="/user" component={UserMenu} />
-        </React.StrictMode>
+        </React.Fragment>
     </BrowserRouter>,
     document.getElementById("root")
 );

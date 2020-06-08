@@ -32,7 +32,18 @@ const SearchFullPage = (props) => {
             <Row justify="center" align="middle" className="search">
                 <Col lg={14} sm={20}>
                     <Search
-                        suffix={<Button type="text" icon={<UserOutlined />} />}
+                        suffix={
+                            <Button
+                                type="text"
+                                icon={
+                                    <UserOutlined
+                                        onClick={() =>
+                                            (window.location.href = "/user")
+                                        }
+                                    />
+                                }
+                            />
+                        }
                         placeholder="Search for professors..."
                         prefix={<SearchOutlined />}
                         enterButton

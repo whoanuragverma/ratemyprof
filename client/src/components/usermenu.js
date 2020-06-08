@@ -1,20 +1,27 @@
 import React, { useState } from "react";
 import SearchBarHome from "./searchbarhome";
-import { Modal, Typography, Tabs, Form, Input, Button, Alert } from "antd";
-import { UserOutlined, LockOutlined, SmileOutlined } from "@ant-design/icons";
+import { Modal, Typography, Tabs, Form, Input, Button, Space } from "antd";
+import {
+    UserOutlined,
+    LockOutlined,
+    SmileOutlined,
+    LockFilled,
+} from "@ant-design/icons";
 
 const { Title } = Typography;
 const { TabPane } = Tabs;
 const UserMenu = () => {
+    const auth = localStorage.getItem("auth");
+    const token = localStorage.getItem("token");
     const [emailValidate, setemailValidate] = useState();
     const [emailValidateError, setemailValidateError] = useState();
     const [passwordValidate, setpasswordValidate] = useState();
     const [passwordValidateError, setpasswordValidateError] = useState();
+    const [OTPValidate, setOTPValidate] = useState();
+    const [OTPValidateError, setOTPValidateError] = useState();
     const [loading, setLoading] = useState(false);
-    const [display, setDisplay] = useState("d-none");
     const onFinishSignUp = (values) => {
         setLoading(true);
-        setDisplay("d-none");
         setemailValidate();
         setemailValidateError();
         setpasswordValidate();
@@ -44,7 +51,7 @@ const UserMenu = () => {
                     setemailValidate("error");
                     setemailValidateError(res.message);
                 } else if (res.code === 1) {
-                    setDisplay("");
+                    onFinishLogin(values);
                 }
             });
         setLoading(false);
@@ -84,13 +91,60 @@ const UserMenu = () => {
                 } else if (res.code === 2) {
                     localStorage.setItem("auth", res.auth);
                     localStorage.setItem("token", res.token);
+                    generateOTP(res.token);
                     window.location.reload();
+                } else if (res.code === 3) {
+                    localStorage.setItem("auth", res.auth);
+                    localStorage.setItem("token", res.token);
+                    window.location.href = "/";
                 }
             });
         setLoading(false);
     };
-    const auth = localStorage.getItem("auth");
-    const token = localStorage.getItem("token");
+    const generateOTP = async (token) => {
+        await fetch("/api/generateOTP", {
+            method: "GET",
+            headers: {
+                "x-access-token": token,
+            },
+        })
+            .then((res) => res.json())
+            .then((res) => {
+                console.log(res);
+                if (res.code === 2 || res.code === 1) {
+                    setOTPValidate("warning");
+                    setOTPValidateError(res.message);
+                }
+            });
+    };
+    const onFinishOTP = (values) => {
+        setLoading(true);
+        fetch("/api/validateOTP", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-access-token": token,
+            },
+            body: JSON.stringify(values),
+        })
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.code === 1) {
+                    setOTPValidate("error");
+                    setOTPValidateError(res.message);
+                } else if (res.code === 0) {
+                    localStorage.setItem("auth", res.auth);
+                    window.location.href = "/";
+                } else if (res.code === 4) {
+                    setOTPValidate("error");
+                    setOTPValidateError("OTP expired. Resend a new one!");
+                }
+            });
+        setLoading(false);
+    };
+    const resendOTP = () => {
+        generateOTP(token);
+    };
     if (!auth || !token) {
         return (
             <React.Fragment>
@@ -212,20 +266,67 @@ const UserMenu = () => {
                                     </Button>
                                 </Form.Item>
                             </Form>
-                            <Alert
-                                message="SignUp Successfull.. Login to Continue"
-                                type="success"
-                                showIcon
-                                banner
-                                className={display}
-                            />
                         </TabPane>
                     </Tabs>
                 </Modal>
             </React.Fragment>
         );
     } else if (auth === "pending") {
-        return "OTP NOT VERIFIED";
+        return (
+            <React.Fragment>
+                <SearchBarHome />
+                <Modal visible footer={null} closable={false} centered>
+                    <Title className="title-small" level={3}>
+                        One last thing..
+                    </Title>
+                    We need to verify your email before you can continue.
+                    <div className="otpbox">
+                        An OTP has been sent to your registered email.
+                    </div>
+                    <Form name="otp" onFinish={onFinishOTP}>
+                        <Form.Item
+                            name="OTP"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Enter the OTP!",
+                                },
+                            ]}
+                            validateStatus={OTPValidate}
+                            help={OTPValidateError}
+                        >
+                            <Input
+                                maxLength={4}
+                                prefix={<LockFilled />}
+                                size="large"
+                                placeholder="Enter your OTP"
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Space size="middle">
+                                <Button
+                                    htmlType="submit"
+                                    type="primary"
+                                    loading={loading}
+                                >
+                                    Validate
+                                </Button>
+                                <Button
+                                    htmlType="button"
+                                    type="dashed"
+                                    gutter={2}
+                                    onClick={resendOTP}
+                                >
+                                    Resend
+                                </Button>
+                            </Space>
+                        </Form.Item>
+                    </Form>
+                </Modal>
+            </React.Fragment>
+        );
+    } else if (auth === "true") {
+        return "VErify token if invalid delete and reload. Otherwise show option to delter";
     }
 };
 export default UserMenu;

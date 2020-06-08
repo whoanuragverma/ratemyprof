@@ -38,6 +38,10 @@ body {
     font-family: "Montserrat", sans-serif;
     font-weight: 700 !important;
 }
+.otpbox {
+    padding: 30px 0;
+    color: #000000;
+}
 .d-none {
     display: none;
 }
