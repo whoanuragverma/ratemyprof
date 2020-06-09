@@ -2,7 +2,7 @@ import React from "react";
 import BackDrop from "../components/backdrop";
 import ProfDetail from "../components/profdetail";
 import ProfRating from "./profrating";
-
+import ProfReview from "./profreview";
 const ProfMenu = ({ match, location }) => {
     const id = match.params.id;
     const auth = localStorage.getItem("auth");
@@ -30,6 +30,7 @@ const ProfMenu = ({ match, location }) => {
             <BackDrop />
             <ProfDetail FID={id} />
             <ProfRating FID={id} />
+            <ProfReview FID={id} />
         </React.Fragment>
     );
 };

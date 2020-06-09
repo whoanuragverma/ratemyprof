@@ -20,10 +20,12 @@ const UserMenu = () => {
     const [passwordValidateError, setpasswordValidateError] = useState();
     const [OTPValidate, setOTPValidate] = useState();
     const [OTPValidateError, setOTPValidateError] = useState();
-    const [loading, setLoading] = useState(false);
+    const [loading1, setLoading1] = useState(false);
+    const [loading2, setLoading2] = useState(false);
     const [Name, setName] = useState("Smelly Cat");
+    const [VCheck, setVCheck] = useState(0);
     const onFinishSignUp = (values) => {
-        setLoading(true);
+        setLoading1(true);
         setemailValidate();
         setemailValidateError();
         setpasswordValidate();
@@ -56,10 +58,10 @@ const UserMenu = () => {
                     onFinishLogin(values);
                 }
             });
-        setLoading(false);
+        setLoading1(false);
     };
     const onFinishLogin = (values) => {
-        setLoading(true);
+        setLoading2(true);
         setemailValidate();
         setemailValidateError();
         setpasswordValidate();
@@ -91,9 +93,9 @@ const UserMenu = () => {
                     setpasswordValidate("error");
                     setpasswordValidateError(res.message);
                 } else if (res.code === 2) {
+                    generateOTP(res.token);
                     localStorage.setItem("auth", res.auth);
                     localStorage.setItem("token", res.token);
-                    generateOTP(res.token);
                     window.location.reload();
                 } else if (res.code === 3) {
                     localStorage.setItem("auth", res.auth);
@@ -101,7 +103,7 @@ const UserMenu = () => {
                     window.location.href = "/";
                 }
             });
-        setLoading(false);
+        setLoading2(false);
     };
     const generateOTP = async (token) => {
         await fetch("/api/generateOTP", {
@@ -120,6 +122,10 @@ const UserMenu = () => {
             });
     };
     const verifyToken = () => {
+        if (VCheck !== 0) {
+            return null;
+        }
+        setVCheck(VCheck + 1);
         fetch("/api/verify", {
             method: "GET",
             headers: {
@@ -133,12 +139,12 @@ const UserMenu = () => {
                     localStorage.removeItem("auth");
                     window.location.reload();
                 } else {
-                    return setName(res.decoded);
+                    setName(res.decoded);
                 }
             });
     };
     const onFinishOTP = (values) => {
-        setLoading(true);
+        setLoading1(true);
         fetch("/api/validateOTP", {
             method: "POST",
             headers: {
@@ -160,7 +166,7 @@ const UserMenu = () => {
                     setOTPValidateError("OTP expired. Resend a new one!");
                 }
             });
-        setLoading(false);
+        setLoading1(false);
     };
     const resendOTP = () => {
         generateOTP(token);
@@ -215,7 +221,7 @@ const UserMenu = () => {
                                 </Form.Item>
                                 <Form.Item>
                                     <Button
-                                        loading={loading}
+                                        loading={loading1}
                                         type="primary"
                                         htmlType="submit"
                                     >
@@ -278,7 +284,7 @@ const UserMenu = () => {
                                 </Form.Item>
                                 <Form.Item>
                                     <Button
-                                        loading={loading}
+                                        loading={loading2}
                                         type="primary"
                                         htmlType="submit"
                                     >
@@ -327,7 +333,7 @@ const UserMenu = () => {
                                 <Button
                                     htmlType="submit"
                                     type="primary"
-                                    loading={loading}
+                                    loading={loading1}
                                 >
                                     Verify
                                 </Button>
@@ -375,6 +381,7 @@ const UserMenu = () => {
                         onClick={() => {
                             localStorage.removeItem("token");
                             localStorage.removeItem("auth");
+                            window.location.reload();
                         }}
                     >
                         {<LogoutOutlined />} Logout

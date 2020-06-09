@@ -28,6 +28,17 @@ const jwt = require("jsonwebtoken");
 const salt = bcrypt.genSaltSync(10);
 const sendOTP = require("./mailServer");
 
+router.post("/findUser", (req, res) => {
+    const query = req.body.UID;
+    User.findById(query)
+        .then((result) => {
+            return res.json({ name: result.name });
+        })
+        .catch(() => {
+            return res.json({ name: "Smelly Cat" });
+        });
+});
+
 router.post(
     "/signup",
     [
@@ -322,7 +333,7 @@ router.post("/write_rating", (req, res) => {
     });
 });
 
-router.get("/check_rating", (req, res) => {
+router.post("/check_rating", (req, res) => {
     const token = req.headers["x-access-token"];
     if (!token) {
         return res.status(409).json({ code: 0, message: "Unauthorized" });
@@ -337,7 +348,7 @@ router.get("/check_rating", (req, res) => {
     });
 });
 
-router.get("/check_review", (req, res) => {
+router.post("/check_review", (req, res) => {
     const token = req.headers["x-access-token"];
     if (!token) {
         return res.status(409).json({ code: 0, message: "Unauthorized" });

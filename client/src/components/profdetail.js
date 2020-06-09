@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Typography, Avatar, Button, Space, Skeleton } from "antd";
-import { ArrowLeftOutlined, MessageOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 const { Title, Text } = Typography;
 const ProfDetail = (props) => {
     const [res, setRes] = useState([]);
@@ -32,17 +32,17 @@ const ProfDetail = (props) => {
                 border: "1px solid #eeeeee",
                 borderRadius: 10,
                 background: "#ffffff",
+                boxShadow: "5px 5px 15px 0px #cdcdcd91",
             }}
         >
             <Row gutter={10} align="middle">
                 <Col lg={12} xs={24}>
                     <Space size="large">
-                        <Button type="dashed">
-                            <ArrowLeftOutlined
-                                onClick={() =>
-                                    (window.location.href = "/search")
-                                }
-                            />
+                        <Button
+                            type="dashed"
+                            onClick={() => (window.location.href = "/search")}
+                        >
+                            <ArrowLeftOutlined />
                         </Button>
                         <Skeleton
                             avatar={{ size: 150, shape: "square" }}
@@ -61,7 +61,7 @@ const ProfDetail = (props) => {
                     gutter={3}
                     style={{ paddingTop: 10, fontSize: "1.1em" }}
                 >
-                    <Skeleton loading={loading} active paragraph={{ rows: 6 }}>
+                    <Skeleton loading={loading} active paragraph={{ rows: 5 }}>
                         <Title level={4}>{res.name}</Title>
                         {res.designation}
                         <br />

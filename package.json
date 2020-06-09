@@ -13,7 +13,6 @@
     "author": "Anurag Verma",
     "license": "ISC",
     "dependencies": {
-        "@ant-design/icons": "^4.2.1",
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.19.0",
         "concurrently": "^5.2.0",
@@ -24,9 +23,7 @@
         "googleapis": "^51.0.0",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^5.9.16",
-        "nodemailer": "^6.4.8",
-        "react-router-dom": "^5.2.0",
-        "react-typing-effect": "^2.0.3"
+        "nodemailer": "^6.4.8"
     },
     "devDependencies": {
         "nodemon": "^2.0.4",
