@@ -5,7 +5,7 @@ const OAuth2 = google.auth.OAuth2;
 const clientId = process.env.clientId;
 const clientSecret = process.env.clientSecret;
 const refresh_token = process.env.refresh_token;
-
+const email = process.env.email;
 const oauth2Client = new OAuth2(
     clientId,
     clientSecret,
@@ -22,27 +22,13 @@ const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
         type: "OAuth2",
-        user: "whoanuragverma@gmail.com",
+        user: email,
         clientId: clientId,
         clientSecret: clientSecret,
         refreshToken: refresh_token,
         accessToken: accessToken,
     },
 });
-
-function sendEmail(email, otp) {
-    var mailOptions = {
-        from: "RateMyProf Team",
-        to: email,
-        subject: "RateMyProf Verification",
-        html:
-            "Hi,<br><br> Here is your OTP for completing sign up for RateMyProf<h2>" +
-            otp +
-            `</h2>This was an additional step to prevent other users from spam.<br>
-            This OTP is valid only for <b>15 minutes</b>.<br><br>Thanks<br>The RateMyProf Team`,
-    };
-    transporter.sendMail(mailOptions);
-}
 
 module.exports = function (email, otp) {
     const mailOptions = {
