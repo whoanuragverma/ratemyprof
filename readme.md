@@ -18,9 +18,9 @@ But before that make sure you set up the following in your environment variables
 Below are the required variables that must be set up before you fire up the project:
 
 -   PORT = 5000 _*Optional*_
--   MONGODB*CRED = *<Your mongoDB URI>\_
--   JWT*SECRET = *<Anything Secret>\_
--   email = _<Your Gmail address>_
+-   MONGODB_CRED = _Your mongoDB URI_
+-   JWT_SECRET = _Anything Secret_
+-   email = _Your Gmail address_
 -   clientId, clientSecret, refresh_token provided by Google
 
 Visit [OAuth Playground](https://developers.google.com/oauthplayground) for the last three variables. Get more help with the last step on [Medium](https://medium.com/@nickroach_50526/sending-emails-with-node-js-using-smtp-gmail-and-oauth2-316fe9c790a1).
