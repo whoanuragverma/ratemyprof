@@ -2,5 +2,18 @@
     "name": "RateMyProf",
     "display": "standalone",
     "theme_color": "#000000",
-    "background_color": "#ffffff"
+    "background_color": "#ffffff",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "type": "image/ico",
+            "sizes": "32x32"
+        },
+        {
+            "src": "/icon-large.png",
+            "type": "image/png",
+            "sizes": "128x128"
+        }
+    ]
 }

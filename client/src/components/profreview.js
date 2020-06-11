@@ -18,6 +18,7 @@ const ProfReview = (props) => {
     const [loading, setLoading] = useState(true);
     const [checked, setChecked] = useState(false);
     const [hasGivenReview, sethasGivenReview] = useState(false);
+    const [Butloading, setButloading] = useState(false);
     const view = () => {
         fetch("/api/read_review", {
             method: "POST",
@@ -90,6 +91,7 @@ const ProfReview = (props) => {
     };
     const sendReview = (values) => {
         values.anonymous = checked;
+        setButloading(true);
         fetch("/api/write_review", {
             method: "POST",
             headers: {
@@ -104,7 +106,6 @@ const ProfReview = (props) => {
         })
             .then((res) => res.json())
             .then((res) => {
-                console.log(res);
                 view();
             });
     };
@@ -137,6 +138,7 @@ const ProfReview = (props) => {
                     <Divider style={{ margin: "10px 0 10px 0" }} />
                     <Form name="userReview" onFinish={sendReview}>
                         <Form.Item name="anonymous" valuePropName="checked">
+                            <b>Posting as </b>
                             <Switch
                                 unCheckedChildren={
                                     <React.Fragment>Yourself 😎</React.Fragment>
@@ -167,6 +169,7 @@ const ProfReview = (props) => {
                             <Button
                                 type="dashed"
                                 htmlType="submit"
+                                loading={Butloading}
                                 style={{
                                     position: "relative",
                                     left: "100%",

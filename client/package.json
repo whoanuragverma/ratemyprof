@@ -15,7 +15,7 @@
         "react-star-rating-component": "^1.4.1",
         "react-typing-effect": "^2.0.3"
     },
-    "proxy": "https://ratemyprof-api-v2.el.r.appspot.com",
+    "proxy":"http://localhost:5000",
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
