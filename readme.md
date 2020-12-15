@@ -2,6 +2,8 @@
 
 RateMyProf is an open source web app made with express, mongoDB and React where you can rate your professors. You can clone this repository and make up your own database of professors to get started.
 
+PS: This was my first project. Sorry for bad code quality. 😿
+
 ## Installation
 
 Clone this repository and run these [npm](https://nodejs.org/en/download/) commands to get started.
