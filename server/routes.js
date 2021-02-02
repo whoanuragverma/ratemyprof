@@ -1,5 +1,5 @@
 /******************************
- *  Copyright Anurag Verma -  2020
+ *  
  *  API Overview:
  *    - signup          -- POST --      BODY[email,password,name]
  *    - login           -- POST --      BODY[email,password]
