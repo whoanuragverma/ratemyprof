@@ -23,7 +23,7 @@
         "googleapis": "^51.0.0",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^5.9.16",
-        "nodemailer": "^6.4.8"
+        "nodemailer": "^6.4.16"
     },
     "devDependencies": {
         "nodemon": "^2.0.4",
